@@ -78,7 +78,7 @@
 
     // ✅ Save to Backend Database (MongoDB)
     try {
-      await fetch("http://localhost:4000/api/save", {
+      await fetch("https://luckybackend.onrender.com/api/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -133,3 +133,4 @@ Tickets: ${tickets.join(', ')}`;
 
 </body>
 </html>
+
