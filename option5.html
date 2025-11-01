@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel - Pro New Year Lucky Draw</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background: #f5f6fa;
+      margin:0;
+      padding: 20px;
+    }
+    h2{
+      text-align:center;
+      margin-bottom:10px;
+    }
+    #countBox{
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #007bff;
+      font-weight: bold;
+    }
+    #searchBox{
+      width: 100%;
+      padding:10px;
+      border:1px solid #ccc;
+      border-radius:6px;
+      margin-bottom:15px;
+      font-size:15px;
+    }
+    table{
+      width:100%;
+      border-collapse: collapse;
+      background:white;
+      border-radius:10px;
+      overflow:hidden;
+    }
+    th, td{
+      padding:10px;
+      border-bottom:1px solid #ddd;
+      text-align:center;
+      font-size:14px;
+    }
+    th{
+      background:#007bff;
+      color:white;
+    }
+    tr:hover{
+      background:#f1f1f1;
+    }
+    .tickets-box{
+      font-size: 12px;
+      background:#f8f8f8;
+      padding:4px;
+      border-radius:6px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>📋 Pro New Year Lucky Draw</h2>
+
+<div id="countBox">Loading...</div>
+
+<input type="text" id="searchBox" placeholder="🔍 Search by Order ID...">
+
+<table>
+  <thead>
+    <tr>
+      <th>Secret Code</th>
+      <th>Option</th>
+      <th>Order ID</th>
+      <th>Total Tickets</th>
+      <th>Ticket IDs</th>
+    </tr>
+  </thead>
+
+  <tbody id="dataBody"></tbody>
+</table>
+
+<script>
+  let filtered = [];
+
+  function loadData(){
+    fetch("http://localhost:4000/api/tickets")
+      .then(res => res.json())
+      .then(data => {
+
+        // ✅ Filter records only for "Pro New Year Lucky draw"
+        filtered = data.filter(item => item.choice === "Pro New Year Lucky draw");
+
+        // ✅ Count total entries
+        const totalEntries = filtered.length;
+
+        // ✅ Count total tickets (sum token)
+        const totalTickets = filtered.reduce((sum, row) => sum + Number(row.token), 0);
+
+        // ✅ Display summary
+        document.getElementById("countBox").innerText =
+          `Total Entries: ${totalEntries} | Total Tickets: ${totalTickets}`;
+
+        renderTable(filtered);
+      });
+  }
+
+  function renderTable(list){
+  const body = document.getElementById("dataBody");
+  body.innerHTML = "";
+
+  list.forEach((item, index) => {
+    body.innerHTML += `
+      <tr>
+        <td>${item.secret}</td>
+        <td>${item.choice}</td>
+
+        <td>
+          <span id="order-${index}">${item.orderId}</span>
+          <button onclick="copyOrder(${index})"
+            style="margin-left:6px; padding:4px 8px; border:none; background:#28a745; color:white; border-radius:4px; cursor:pointer;">
+            Copy
+          </button>
+        </td>
+
+        <td>${item.token}</td>
+        <td class="tickets-box">${item.tickets.join(", ")}</td>
+      </tr>`;
+  });
+}
+function copyOrder(id){
+  let text = document.getElementById("order-" + id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("✅ Order ID Copied!");
+  });
+}
+
+
+  // 🔍 Search by Order ID
+  document.getElementById("searchBox").addEventListener("input", function(){
+    const value = this.value.toLowerCase();
+    const result = filtered.filter(row => row.orderId.toLowerCase().includes(value));
+    renderTable(result);
+  });
+
+  loadData();
+</script>
+
+
+</body>
+</html>

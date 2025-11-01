@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>All Tickets - Pro Christmas Lucky Draw</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#f5f6fa;
+      padding:20px;
+    }
+    h2{
+      text-align:center;
+      margin-bottom:5px;
+    }
+    #countBox{
+      text-align:center;
+      font-size:16px;
+      margin-bottom:15px;
+      color:#007bff;
+      font-weight:bold;
+    }
+    #searchBox{
+      width:300px;
+      padding-left: 20px;
+      margin-right:40px;
+      height: 40px;
+      margin-bottom:12px;
+      border:1px solid #aaa;
+      border-radius:5px;
+      font-size:16px;
+    }
+    #resultBox{
+      width: 500px;
+      padding: 30px;
+      background-color: rgb(184, 255, 255);
+      text-align: center;
+      margin-top:10px;
+      font-size:26px;
+      font-weight:bold;
+      color:#f82019;
+      text-align:center;
+      border-radius: 10px;
+    }
+    #allTicketsBox{
+      background:white;
+      padding:15px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      font-size:14px;
+      min-height:150px;
+      overflow-wrap:break-word;
+    }
+    #copyBtn{
+      margin-top:15px;
+      padding:10px 14px;
+      background:#28a745;
+      color:white;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
+      display:block;
+      width:100%;
+      font-size:15px;
+    }
+    #copyBtn:hover{
+      background:#218838;
+    }
+  </style>
+
+</head>
+<body>
+
+<h2>🎟 All Ticket IDs (Pro Christmas Lucky Draw)</h2>
+
+<div id="countBox">Loading...</div>
+
+<input type="number" id="searchBox" placeholder="Enter Serial Number (e.g., 120)" oninput="findTicket()">
+
+<div id="resultBox"></div>
+
+<div id="allTicketsBox">Loading...</div>
+
+<button id="copyBtn" onclick="copyAllTickets()">Copy All Tickets</button>
+
+<script>
+let allTicketIDs = [];
+
+function loadTickets(){
+  fetch("http://localhost:4000/api/tickets")
+    .then(res => res.json())
+    .then(data => {
+
+      let filtered = data.filter(item => item.choice === "Pro Christmas Lucky draw ");
+
+      allTicketIDs = filtered.flatMap(item => item.tickets);
+
+      // ✅ Show count
+      document.getElementById("countBox").innerText = 
+        `Total Tickets : ${allTicketIDs.length}`;
+
+      // ✅ Show tickets list
+      document.getElementById("allTicketsBox").innerText = allTicketIDs.join(", ");
+    });
+}
+
+function copyAllTickets(){
+  const text = document.getElementById("allTicketsBox").innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("✅ All Tickets Copied!");
+  });
+}
+
+function findTicket(){
+  let index = document.getElementById("searchBox").value;
+  index = parseInt(index);
+
+  if(isNaN(index) || index < 1){
+    document.getElementById("resultBox").innerText = "";
+    return;
+  }
+
+  if(index > allTicketIDs.length){
+    document.getElementById("resultBox").innerText = "❌ This serial number does not exist!";
+  } else {
+    document.getElementById("resultBox").innerText = 
+      `✅ Ticket ID at Serial ${index}:  ${allTicketIDs[index - 1]}`;
+  }
+}
+
+loadTickets();
+</script>
+
+</body>
+</html>

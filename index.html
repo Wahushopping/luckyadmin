@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>Admin Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background: #f8f8f8;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 300px;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-fixed {
+    padding-top: 20px;
+    flex-shrink: 0;
+    border-bottom: 1px solid #eee;
+  }
+  .sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+  }
+  .sidebar a {
+    display: block;
+    padding: 12px 20px;
+    margin: 0 10px;
+    border-radius: 6px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .sidebar a:hover, .sidebar a.active { background: #007bff; color: #fff; }
+
+  /* Main Content */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Topbar */
+  .topbar {
+    background: #a8fc5a;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .topbar h1 { font-size: 18px; font-weight: bold; }
+  .topbar a {
+    text-decoration: none;
+    color: #333;
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  .topbar a:hover { background: #007bff; color: #fff; }
+
+  /* Iframe */
+  iframe {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: #f4f4f4;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { width: 180px; }
+    .topbar a { padding: 5px 10px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-fixed" style="background-color: #a8fc5a;">
+    <a href="deahboard.html" target="mainFrame" class="active" style="background-color: brown;">Dashboard</a>
+    <a href="add.html" target="mainFrame"><i class="fa-solid fa-plus"></i> Resister</a>
+    <a href="alluser.html" target="mainFrame"><i class="fa-brands fa-first-order"></i> All User</a>
+  </div>
+
+  <h3 style="padding-left: 30px; background-color: #b1b1b1; margin: 10px; padding: 10px; border-radius: 7px;">
+    Category
+  </h3>
+
+  <div class="sidebar-scroll">
+    <a href="option1.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i> Super Christmas</a>
+    <a href="option2.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i> Pro Christmas</a>
+    <a href="option3.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i> Refurbished Christmas</a>
+    <a href="option4.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i>Super New Year</a>
+    <a href="option5.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i> Pro New Year</a>
+    <a href="option6.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i> Refurbished New Year</a>
+
+  </div>
+  <div style="background-color: aquamarine;">
+    <h4 style="padding-left: 20px; padding: 20px; background-color: coral;">Draw</h4>
+    <a href="1tickets.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i> Super Christmas Draw</a>
+    <a href="2tickets.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i> Pro Christmas Draw</a>
+    <a href="3tickets.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i> Refurbished Christmas Draw</a>
+    <a href="4tickets.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i>Super New Year Draw</a>
+    <a href="5tickets.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i> Pro New Year Draw</a>
+    <a href="6tickets.html" target="mainFrame"><i class="fa-regular fa-square-plus"></i> Refurbished New Year Draw</a>
+  </div>
+  
+</div>
+
+<div class="main">
+  <div class="topbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #a8fc5a; border-bottom: 1px solid #ccc;">
+    <h1 style="margin: 0;">Wahu Shopping</h1>
+
+  </div>
+
+  <!-- Main content iframe -->
+  <iframe name="mainFrame" src="deahboard.html"></iframe>
+</div>
+
+
+<script>
+  // Highlight active sidebar link
+  const links = document.querySelectorAll('.sidebar a');
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      links.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

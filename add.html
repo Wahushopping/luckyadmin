@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Generate Tickets</title>
+  <link rel="stylesheet" href="style.css">
+
+  
+</head>
+
+<body>
+  <main class="card">
+    <h1>Generate Ticket IDs</h1>
+
+    <form id="theForm">
+      <div class="field">
+        <label>Select Option</label>
+        <label><input type="radio" name="choice" value="Super Christmas Lucky draw" required> Super Christmas</label>
+        <label><input type="radio" name="choice" value="Pro Christmas Lucky draw "> Pro Christmas</label>
+        <label><input type="radio" name="choice" value="Refurbished Christmas Lucky draw"> Refurbished Christmas</label>
+        <label><input type="radio" name="choice" value="Super New Year Lucky draw"> Super New Year</label>
+        <label><input type="radio" name="choice" value="Pro New Year Lucky draw"> Pro New Year</label>
+        <label><input type="radio" name="choice" value="Refurbished New Year Lucky draw"> Refurbished New Year</label>
+      </div>
+
+      <div class="field">
+        <label>Secret Code (10 digits)</label>
+        <input id="secret" type="tel" maxlength="10" placeholder="1234567890" required/>
+      </div>
+
+      <div class="field">
+        <label>Order ID</label>
+        <input id="orderId" placeholder="Enter Order ID" required/>
+      </div>
+
+      <div class="field">
+        <label>Generate How Many Tickets?</label>
+        <input id="token" type="number" min="1" placeholder="Enter number (1,2,3,4...)" required/>
+      </div>
+
+      <button type="submit">Submit</button>
+
+      <div id="error" class="error"></div>
+      <div id="success" class="success"></div>
+    </form>
+  </main>
+
+  <script>
+  const form = document.getElementById('theForm');
+  const error = document.getElementById('error');
+  const success = document.getElementById('success');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const choice = form.elements['choice'].value;
+    const secret = document.getElementById('secret').value.trim();
+    const orderId = document.getElementById('orderId').value.trim();
+    const tokenNumber = parseInt(document.getElementById('token').value.trim());
+
+    if (secret.length !== 10) {
+      error.textContent = "Secret code must be exactly 10 digits.";
+      error.style.display = "block";
+      success.style.display = "none";
+      return;
+    }
+
+    if (tokenNumber < 1) {
+      error.textContent = "Token must be 1 or greater.";
+      error.style.display = "block";
+      success.style.display = "none";
+      return;
+    }
+
+    // ✅ Generate ticket IDs
+    const tickets = generateTickets(tokenNumber);
+
+    // ✅ Save to Backend Database (MongoDB)
+    try {
+      await fetch("http://localhost:4000/api/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          choice,
+          secret,
+          orderId,
+          token: tokenNumber,
+          tickets // <-- include list of tickets
+        })
+      });
+    } catch (err) {
+      console.log("Server Error:", err);
+    }
+
+    // ✅ Save to LocalStorage for Admin Dashboard
+    saveSubmission(secret, tokenNumber, tickets);
+
+    success.textContent = `✅ Submitted Successfully!
+Option: ${choice}
+Secret Code: ${secret}
+Order ID: ${orderId}
+Total Tickets: ${tokenNumber}
+Tickets: ${tickets.join(', ')}`;
+
+    success.style.display = "block";
+    error.style.display = "none";
+  });
+
+  function generateTickets(count) {
+    let arr = [];
+    for (let i = 0; i < count; i++) {
+      arr.push(Math.floor(100000 + Math.random() * 900000).toString());
+    }
+    return arr;
+  }
+
+  // ✅ This function stores data locally for Admin
+  function saveSubmission(secretCode, tokenCount, tickets) {
+    let allData = JSON.parse(localStorage.getItem("allSubmissions")) || [];
+
+    allData.push({
+      secretCode,
+      tokenCount,
+      tickets,
+      date: new Date().toLocaleString()
+    });
+
+    localStorage.setItem("allSubmissions", JSON.stringify(allData));
+  }
+</script>
+
+
+</body>
+</html>

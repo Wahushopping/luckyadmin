@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel - All Tickets</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background: #f5f6fa;
+      margin:0;
+      padding: 20px;
+    }
+    h2{
+      text-align:center;
+      margin-bottom:20px;
+    }
+    #searchBar{
+      width:300px;
+      padding:10px;
+      margin-bottom:15px;
+      font-size:14px;
+      border:1px solid #ccc;
+      border-radius:6px;
+    }
+    table{
+      width:100%;
+      border-collapse: collapse;
+      background:white;
+      border-radius:10px;
+      overflow:hidden;
+    }
+    th, td{
+      padding:10px;
+      border-bottom:1px solid #ddd;
+      text-align:center;
+      font-size:14px;
+    }
+    th{
+      background:#007bff;
+      color:white;
+    }
+    tr:hover{
+      background:#f1f1f1;
+    }
+    .tickets-box{
+      font-size: 12px;
+      background:#f8f8f8;
+      padding:4px;
+      border-radius:6px;
+    }
+    .copy-btn{
+      background:#28a745;
+      color:white;
+      border:none;
+      padding:6px 10px;
+      border-radius:6px;
+      cursor:pointer;
+    }
+    .copy-btn:hover{
+      background:#218838;
+    }
+  </style>
+</head>
+<body>
+
+<h2>📋 Admin Panel - All Ticket Records</h2>
+
+<input type="text" id="searchBar" placeholder="🔍 Search by Ticket ID... (Example: TK-025)">
+
+<table>
+  <thead>
+    <tr>
+      <th>Secret Code</th>
+      <th>Option</th>
+      <th>Order ID</th>
+      <th>Total Tickets</th>
+      <th>Ticket IDs</th>
+    </tr>
+  </thead>
+
+  <tbody id="dataBody"></tbody>
+</table>
+
+<script>
+  let allData = [];
+
+  function loadData(){
+    fetch("http://localhost:4000/api/tickets")
+      .then(res => res.json())
+      .then(data => {
+        allData = data;
+        renderTable(data);
+      });
+  }
+
+  function renderTable(data){
+    const body = document.getElementById("dataBody");
+    body.innerHTML = "";
+
+    data.forEach(item => {
+      body.innerHTML += `
+        <tr>
+          <td>${item.secret}</td>
+          <td>${item.choice}</td>
+          <td>
+            ${item.orderId}
+            <button class="copy-btn" onclick="copyText('${item.orderId}')">Copy</button>
+          </td>
+          <td>${item.token}</td>
+          <td class="tickets-box">${item.tickets.join(", ")}</td>
+        </tr>`;
+    });
+  }
+
+  function copyText(text){
+    navigator.clipboard.writeText(text);
+    alert("✅ Order ID Copied: " + text);
+  }
+
+  document.getElementById("searchBar").addEventListener("input", function(){
+    const searchValue = this.value.toLowerCase();
+
+    const filtered = allData.filter(item =>
+      item.tickets.some(t => t.toLowerCase().includes(searchValue))
+    );
+
+    renderTable(filtered);
+  });
+
+  loadData();
+</script>
+
+</body>
+</html>
