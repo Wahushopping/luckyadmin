@@ -84,7 +84,7 @@
   let filtered = [];
 
   function loadData(){
-    fetch("http://localhost:4000/api/tickets")
+    fetch("https://luckybackend.onrender.com/api/tickets")
       .then(res => res.json())
       .then(data => {
 
@@ -149,3 +149,4 @@ function copyOrder(id){
 
 </body>
 </html>
+
